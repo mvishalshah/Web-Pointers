@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { io } from "socket.io-client";
 
+const backendUrl = (
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
+
 export default function Home() {
     const [task, setTask] = useState("");
     const [message, setMessage] = useState("");
@@ -36,7 +40,7 @@ export default function Home() {
     // =========================================================
 
     useEffect(() => {
-        const socket = io("http://localhost:5000", {
+        const socket = io(backendUrl, {
             transports: ["websocket"],
         });
 
@@ -242,7 +246,7 @@ export default function Home() {
             setMessage("");
 
             const response = await fetch(
-                "http://localhost:5000/api/task",
+                `${backendUrl}/api/task`,
                 {
                     method: "POST",
                     headers: {
@@ -483,7 +487,7 @@ export default function Home() {
                                 ? "CONNECTED"
                                 : agentStatus
                         }
-                        detail="localhost:5000"
+                        detail={backendUrl.replace(/^https?:\/\//, "")}
                         online={
                             agentStatus === "CONNECTED"
                         }
